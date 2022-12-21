@@ -17,7 +17,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '5'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 
 def setup_seed(seed):
@@ -54,7 +54,7 @@ def train_epoch(epoch, net, criterion, optimizer, scheduler, train_loader):
     for data in tqdm(train_loader):
         x_d = data['d_img_org'].cuda()
         labels = data['score']
-        labels = torch.squeeze(labels.type(torch.FloatTensor)).cuda()  
+        labels = torch.squeeze(labels.type(torch.FloatTensor)).cuda()
     
         pred_d = net(x_d)
 
@@ -119,7 +119,7 @@ def eval_epoch(config, epoch, net, criterion, test_loader):
 
 
 if __name__ == '__main__':
-    cpu_num = 1
+    cpu_num = 32
     os.environ['OMP_NUM_THREADS'] = str(cpu_num)
     os.environ['OPENBLAS_NUM_THREADS'] = str(cpu_num)
     os.environ['MKL_NUM_THREADS'] = str(cpu_num)
@@ -135,13 +135,13 @@ if __name__ == '__main__':
         "db_name": "PIPAL",
         # "train_dis_path": "/mnt/data_16TB/wth22/IQA_dataset/PIPAL/Train_Distort/",
         # "val_dis_path": "/mnt/data_16TB/wth22/IQA_dataset/PIPAL/Val_Distort/",
-        "train_dis_path": "./data/train_distort/",
-        "val_dis_path": "./data/val_distort/",
-        "train_txt_file_name": "./data/pipal21_train.txt",
-        "val_txt_file_name": "./data/pipal21_val.txt",
+        "train_dis_path": "./datasets/pipal-22/Train_Distort",
+        "val_dis_path": "./datasets/pipal-22/Val_Distort",
+        "train_txt_file_name": "./MANIQA/data/pipal21_train.txt",
+        "val_txt_file_name": "./MANIQA/data/pipal21_val.txt",
 
         # optimization
-        "batch_size": 8,
+        "batch_size": 4,
         "learning_rate": 1e-5,
         "weight_decay": 1e-5,
         "n_epoch": 300,
