@@ -35,13 +35,12 @@ class TABlock(nn.Module):
 
 class SaveOutput:
     def __init__(self):
-        self.outputs = []
+        self.outputs = {}
     
     def __call__(self, module, module_in, module_out):
-        self.outputs.append(module_out)
-    
-    def clear(self):
-        self.outputs = []
+        if module_in[0].device not in self.outputs:
+            self.outputs[module_in[0].device] = []
+        self.outputs[module_in[0].device].append(module_out)
 
 
 class MANIQA(nn.Module):
@@ -109,18 +108,19 @@ class MANIQA(nn.Module):
             nn.Sigmoid()
         )
     
-    def extract_feature(self, save_output):
-        x6 = save_output.outputs[6][:, 1:]
-        x7 = save_output.outputs[7][:, 1:]
-        x8 = save_output.outputs[8][:, 1:]
-        x9 = save_output.outputs[9][:, 1:]
+    def extract_feature(self, save_output, device):
+        output = save_output.outputs[device]
+        x6 = output[6][:, 1:]
+        x7 = output[7][:, 1:]
+        x8 = output[8][:, 1:]
+        x9 = output[9][:, 1:]
         x = torch.cat((x6, x7, x8, x9), dim=2)
         return x
 
     def forward(self, x):
         _x = self.vit(x)
-        x = self.extract_feature(self.save_output)
-        self.save_output.outputs.clear()
+        x = self.extract_feature(self.save_output, x.device)
+        self.save_output.outputs[x.device].clear()
 
         # stage 1
         x = rearrange(x, 'b (h w) c -> b c (h w)', h=self.input_size, w=self.input_size)
