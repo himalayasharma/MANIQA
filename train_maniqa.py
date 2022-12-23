@@ -17,7 +17,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '0,1,2,3'
 
 
 def setup_seed(seed):
@@ -141,7 +141,7 @@ if __name__ == '__main__':
         "val_txt_file_name": "./MANIQA/data/pipal21_val.txt",
 
         # optimization
-        "batch_size": 4,
+        "batch_size": 12,
         "learning_rate": 1e-5,
         "weight_decay": 1e-5,
         "n_epoch": 300,
